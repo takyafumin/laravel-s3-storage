@@ -52,9 +52,25 @@ services:
             - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
         networks:
             - sail
+    minio:
+        image: minio/minio:latest
+        volumes:
+            - sail-minio:/data
+        ports:
+            - 9000:9000
+            - 9001:9001
+        environment:
+            MINIO_ACCESS_KEY: ${AWS_ACCESS_KEY_ID}
+            MINIO_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY}
+        command: server /data --address :9000 --console-address :9001
+        networks:
+            - sail
+
 networks:
     sail:
         driver: bridge
 volumes:
     sail-mysql:
+        driver: local
+    sail-minio:
         driver: local
